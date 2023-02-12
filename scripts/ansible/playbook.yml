@@ -1,0 +1,5 @@
+---
+- name: Install ROS
+  hosts: all
+  roles:
+    - ros_install

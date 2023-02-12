@@ -1,0 +1,42 @@
+---
+- name: User has passwordless sudo # noqa no-tabs
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    regexp: '^%sudo'
+    line: '%sudo	ALL=(ALL:ALL) NOPASSWD:ALL'
+
+- name: Add ROS apt signing key
+  become: true
+  ansible.builtin.apt_key:
+    id: C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+    url: https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
+    state: present
+
+- name: Add ROS repository into sources list
+  become: true
+  ansible.builtin.apt_repository:
+    repo: deb http://packages.ros.org/ros/ubuntu focal main
+    state: present
+    filename: ros-latest
+
+- name: Install ROS and dependencies for building packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - ros-noetic-desktop-full
+      - python3-rosdep
+      - python3-rosinstall
+      - python3-rosinstall-generator
+      - python3-wstool
+      - build-essential
+    state: present
+    update_cache: true
+
+- name: Source ROS environment on user login
+  ansible.builtin.lineinfile:
+    path: ~/.bashrc
+    line: source /opt/ros/noetic/setup.bash
+
+- name: Run Jackal setup script
+  ansible.builtin.script: jackal_setup.sh
