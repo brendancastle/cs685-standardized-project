@@ -49,3 +49,6 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+nav_competition_image.sif
+out.txt
