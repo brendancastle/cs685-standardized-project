@@ -2,7 +2,7 @@
   <arg name="use_sim_time" default="true" />
   <arg name="gui" default="false" />
   <arg name="headless" default="true" />
-  <arg name="world_name" default="$(find jackal_helper)/worlds/jackal_race.world" />
+  <arg name="world_name" default="$(find barn_challenge_nav)/worlds/jackal_race.world" />
 
   <!-- Short-term hack to support the original front_laser:=true argument for spawning
        the simulator. This will be removed in favour of using the config:=x arg instead. -->
@@ -37,6 +37,6 @@
     <arg name="joystick" value="$(arg joystick)" />
   </include>
 
-  <node pkg="jackal_helper" type="collision_publisher_node" name="collision_publisher_node" />
+  <node pkg="barn_challenge_nav" type="collision_publisher_node" name="collision_publisher_node" />
 
 </launch>
