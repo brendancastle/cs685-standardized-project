@@ -44,7 +44,7 @@ if __name__ == "__main__":
     world_name = "BARN/world_%d.world" %(args.world_idx)
     print(">>>>>>>>>>>>>>>>>> Loading Gazebo Simulation with %s <<<<<<<<<<<<<<<<<<" %(world_name))   
     rospack = rospkg.RosPack()
-    base_path = rospack.get_path('jackal_helper')
+    base_path = rospack.get_path('barn_challenge_nav')
     
     launch_file = join(base_path, 'launch', 'gazebo_launch.launch')
     world_name = join(base_path, "worlds", world_name)
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     ## (Customize this block to add your own navigation stack)
     ##########################################################################################
     
-    launch_file = join(base_path, '..', 'jackal_helper/launch/move_base_DWA.launch')
+    launch_file = join(base_path, '..', 'barn_challenge_nav/launch/move_base_DWA.launch')
     nav_stack_process = subprocess.Popen([
         'roslaunch',
         launch_file,
