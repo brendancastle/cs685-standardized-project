@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
     std_msgs
     message_generation
     geometry_msgs
+    dwa_local_planner
 )
 
 include(FindBoost)
@@ -110,10 +111,10 @@ find_package(Protobuf REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES contact_republisher
+ LIBRARIES barn_challenge_nav
 #  CATKIN_DEPENDS roscpp std_msgs
 #  DEPENDS system_lib
-    CATKIN_DEPENDS gazebo_msgs message_runtime
+    CATKIN_DEPENDS gazebo_msgs message_runtime dwa_local_planner
 )
 
 ###########
@@ -132,6 +133,7 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/contact_republisher.cpp
 # )
+add_library(enhanced_trajectory_generator src/enhanced_trajectory_generator.cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -205,3 +207,4 @@ add_executable(collision_publisher_node src/collision_publisher.cpp)
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 target_link_libraries(collision_publisher_node ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} ${PROTOBUF_LIBRARIES} pthread)
+include_directories(include)
