@@ -1,0 +1,41 @@
+#!/usr/bin/python3
+
+import rospy
+from sensor_msgs.msg import LaserScan
+from geometry_msgs.msg import Twist
+
+class ObstacleAvoidance:
+    def __init__(self):
+        self.min_distance = 0.5 # minimum distance to obstacle
+        self.max_distance = 1.5 # maximum distance to obstacle
+        self.safe_distance = 1.0 # safe distance to obstacle
+        self.max_velocity = 0.5 # maximum linear velocity of the robot
+        self.max_angular_velocity = 0.5 # maximum angular velocity of the robot
+        self.obstacle_detected = False # flag to indicate if obstacle is detected
+        self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1) # publisher for velocity commands
+        rospy.Subscriber('/scan', LaserScan, self.laser_scan_callback) # subscriber for laser scan data
+        rospy.spin()
+
+    def laser_scan_callback(self, data):
+        # calculate minimum distance to obstacle
+        min_range = min(data.ranges)
+        if min_range < self.min_distance:
+            self.obstacle_detected = True
+        else:
+            self.obstacle_detected = False
+
+        # generate velocity command
+        if self.obstacle_detected:
+            twist = Twist()
+            twist.linear.x = max(0.0, (self.safe_distance - min_range) / (self.safe_distance - self.min_distance)) * self.max_velocity
+            twist.angular.z = (0.5 - data.ranges[len(data.ranges)//2]) * self.max_angular_velocity
+            self.cmd_vel_pub.publish(twist)
+        else:
+            twist = Twist()
+            twist.linear.x = self.max_velocity
+            twist.angular.z = 0.0
+            self.cmd_vel_pub.publish(twist)
+
+if __name__ == '__main__':
+    rospy.init_node('obstacle_avoidance')
+    avoidance = ObstacleAvoidance()
