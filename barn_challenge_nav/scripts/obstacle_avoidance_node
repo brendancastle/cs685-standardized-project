@@ -38,4 +38,7 @@ class ObstacleAvoidance:
 
 if __name__ == '__main__':
     rospy.init_node('obstacle_avoidance')
-    avoidance = ObstacleAvoidance()
+    try:
+        avoidance = ObstacleAvoidance()
+    except rospy.ROSException as e:
+        rospy.logerr("Error initializing obstacle avoidance node: {}".format(e))
