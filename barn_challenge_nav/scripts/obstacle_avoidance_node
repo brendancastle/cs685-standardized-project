@@ -1,36 +1,52 @@
 #!/usr/bin/python3
 
-import rospy
-from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import Twist
+import rospy # Import the rospy library to interface with ROS
+from sensor_msgs.msg import LaserScan # Import the LaserScan message type from the sensor_msgs package
+from geometry_msgs.msg import Twist # Import the Twist message type from the geometry_msgs package
 
 class ObstacleAvoidance:
     def __init__(self):
         rospy.loginfo("Initializing obstacle avoidance node")
-        self.min_distance = rospy.get_param('~min_distance', 0.5)
+
+        # Initialize parameters with default values from the parameter server, or use user-specified values if available
+        self.min_distance = rospy.get_param('~min_distance', 0.5) 
         self.max_distance = rospy.get_param('~max_distance', 1.5)
         self.safe_distance = rospy.get_param('~safe_distance', 1.0)
         self.max_velocity = rospy.get_param('~max_velocity', 0.5)
         self.max_angular_velocity = rospy.get_param('~max_angular_velocity', 0.5)
         self.obstacle_detected = False
+
+        # Create a publisher for sending velocity commands to the robot
         self.cmd_vel_pub = rospy.Publisher(rospy.get_param('~cmd_vel_topic', '/cmd_vel'), Twist, queue_size=1)
+
+        # Subscribe to the laser scan data topic to receive data about the robot's surroundings
         rospy.Subscriber(rospy.get_param('~scan_topic', '/scan'), LaserScan, self.laser_scan_callback)
         rospy.loginfo("Obstacle avoidance node initialized")
-        rospy.spin()
+        rospy.spin() # Spin the node to keep it running until it is stopped
 
     def laser_scan_callback(self, data):
+        # Find the minimum distance to an obstacle from the laser scan data
         min_range = min(data.ranges)
+
+        # Set the obstacle_detected flag based on whether the minimum distance is less than the minimum safe distance
         if min_range < self.min_distance:
             self.obstacle_detected = True
         else:
             self.obstacle_detected = False
 
+        # Generate a velocity command based on whether an obstacle is detected
         if self.obstacle_detected:
+            # Calculate the linear velocity based on the distance to the obstacle
             twist = Twist()
             twist.linear.x = max(0.0, (self.safe_distance - min_range) / (self.safe_distance - self.min_distance)) * self.max_velocity
+
+            # Calculate the angular velocity based on the direction of the obstacle
             twist.angular.z = (0.5 - data.ranges[len(data.ranges)//2]) * self.max_angular_velocity
+
+            # Publish the velocity command to the robot
             self.cmd_vel_pub.publish(twist)
         else:
+            # If no obstacle is detected, move forward at the maximum linear velocity and do not turn
             twist = Twist()
             twist.linear.x = self.max_velocity
             twist.angular.z = 0.0
