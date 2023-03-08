@@ -34,10 +34,10 @@ class ObstacleAvoidance:
         else:
             self.obstacle_detected = False
 
+        twist = Twist()
         # Generate a velocity command based on whether an obstacle is detected
         if self.obstacle_detected:
             # Calculate the linear velocity based on the distance to the obstacle
-            twist = Twist()
             twist.linear.x = max(0.0, (self.safe_distance - min_range) / (self.safe_distance - self.min_distance)) * self.max_velocity
 
             # Calculate the angular velocity based on the direction of the obstacle
@@ -47,7 +47,6 @@ class ObstacleAvoidance:
             self.cmd_vel_pub.publish(twist)
         else:
             # If no obstacle is detected, move forward at the maximum linear velocity and do not turn
-            twist = Twist()
             twist.linear.x = self.max_velocity
             twist.angular.z = 0.0
             self.cmd_vel_pub.publish(twist)
