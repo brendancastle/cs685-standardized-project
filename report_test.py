@@ -36,7 +36,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     
-    base_path = 'jackal_helper'
+    base_path = 'barn_challenge_nav'
     optimal_times = {}
     cell_counts = {}
     for idx in range(50):
