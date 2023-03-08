@@ -12,6 +12,7 @@
     <rosparam file="$(find barn_challenge_nav)/configs/params/base_local_planner_params.yaml" command="load" />
     <rosparam file="$(find barn_challenge_nav)/configs/params/move_base_params.yaml" command="load" />
 
+    <param name="trajectory_generator_plugin" value="dwa_local_planner_plugin/ImprovedTrajectoryGenerator" />
     <param name="base_global_planner" type="string" value="navfn/NavfnROS" />
     <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
 
