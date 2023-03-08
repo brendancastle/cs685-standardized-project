@@ -6,14 +6,14 @@ from geometry_msgs.msg import Twist
 
 class ObstacleAvoidance:
     def __init__(self):
-        self.min_distance = 0.5 # minimum distance to obstacle
-        self.max_distance = 1.5 # maximum distance to obstacle
-        self.safe_distance = 1.0 # safe distance to obstacle
-        self.max_velocity = 0.5 # maximum linear velocity of the robot
-        self.max_angular_velocity = 0.5 # maximum angular velocity of the robot
-        self.obstacle_detected = False # flag to indicate if obstacle is detected
-        self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1) # publisher for velocity commands
-        rospy.Subscriber('/scan', LaserScan, self.laser_scan_callback) # subscriber for laser scan data
+        self.min_distance = rospy.get_param('~min_distance', 0.5)
+        self.max_distance = rospy.get_param('~max_distance', 1.5)
+        self.safe_distance = rospy.get_param('~safe_distance', 1.0)
+        self.max_velocity = rospy.get_param('~max_velocity', 0.5)
+        self.max_angular_velocity = rospy.get_param('~max_angular_velocity', 0.5)
+        self.obstacle_detected = False
+        self.cmd_vel_pub = rospy.Publisher(rospy.get_param('~cmd_vel_topic', '/cmd_vel'), Twist, queue_size=1)
+        rospy.Subscriber(rospy.get_param('~scan_topic', '/scan'), LaserScan, self.laser_scan_callback)
         rospy.spin()
 
     def laser_scan_callback(self, data):
